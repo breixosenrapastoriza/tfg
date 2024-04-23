@@ -13,6 +13,7 @@ const Flashcards = () => {
   const params = useLoaderData();
   const { user, setUser } = useContext(UserContext);
   const currentPath = "/" + params.id + (params["*"] && "/" + params["*"]);
+  const [selectedCardId, setSelectedCardId] = useState(null);
   const [flashcards, setFlashcards] = useState([]);
   const [flashcard, setFlashcard] = useState({
     question: "",
@@ -34,6 +35,17 @@ const Flashcards = () => {
     });
   };
 
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    await updateFlashcard(user, selectedCardId, flashcard);
+    loadFlashcards();
+    setFlashcard({
+      question: "",
+      answer: "",
+      path: currentPath.replace(/\//g, "\\"),
+    });
+  };
+
   const handleChange = (e) => {
     setFlashcard({ ...flashcard, [e.target.name]: e.target.value });
   };
@@ -46,6 +58,7 @@ const Flashcards = () => {
   const handleClickUpdate = async (card) => {
     setFlashcard(card);
     setModify(true);
+    setSelectedCardId(card.id);
   };
 
   const loadFlashcards = async () => {
@@ -67,7 +80,7 @@ const Flashcards = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={modify ? handleUpdate : handleSubmit}>
         <label>Question: </label>
         <input
           type="text"
