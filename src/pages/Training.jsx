@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
 import { getFlashcards, updateFlashcard } from "../config/firebase";
-import { currentTime, dateDifference } from "../utils/utils";
+import { currentTime, dateDifference, getRandomInt } from "../utils/utils";
 
 const Training = () => {
   const params = useLoaderData();
@@ -19,24 +19,28 @@ const Training = () => {
     gottenFlashcards = gottenFlashcards.filter((card) =>
       card.path.startsWith(currentPath)
     );
-    console.log("ANTES:");
-    console.log(currentTime(180));
-    console.log(gottenFlashcards[0].time);
-    console.log(dateDifference(currentTime(120), gottenFlashcards[0].time));
-    console.log(dateDifference("2024-04-23T12:05:00", "2024-04-28"));
-
     gottenFlashcards = gottenFlashcards.filter(
       (card) => dateDifference(currentTime(0), card.time) <= 0
     );
 
     if (gottenFlashcards.length !== 0) {
-      const leastKnowledgeFlashcard = gottenFlashcards.reduce(
+      /*const leastKnowledgeFlashcard = gottenFlashcards.reduce(
         (minor, actual) => {
           return actual.knowledge < minor.knowledge ? actual : minor;
         }
+      );*/
+      const minKnowledge = gottenFlashcards.reduce((min, current) => {
+        return current.knowledge < min ? current.knowledge : min;
+      }, gottenFlashcards[0].knowledge);
+
+      const listLeastKnowledgeFlashcards = gottenFlashcards.filter(
+        (carta) => carta.knowledge === minKnowledge
       );
-      console.log("Carta: ");
-      console.log(leastKnowledgeFlashcard);
+      const leastKnowledgeFlashcard =
+        listLeastKnowledgeFlashcards[
+          getRandomInt(listLeastKnowledgeFlashcards.length - 1)
+        ];
+
       setFlashcard(leastKnowledgeFlashcard);
       setLoad(false);
       setEmpty(false);

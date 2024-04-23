@@ -29,3 +29,7 @@ export function dateDifference(fecha1, fecha2) {
 
   return diferenciaEnMinutos;
 }
+
+export function getRandomInt(max) {
+  return Math.floor(Math.random() * (max + 1));
+}
