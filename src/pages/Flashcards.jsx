@@ -24,7 +24,7 @@ const Flashcards = () => {
   const navigate = useNavigate();
   const [trainingMode, setTrainingMode] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     await addFlashcard(user, flashcard);
     loadFlashcards();
@@ -80,7 +80,7 @@ const Flashcards = () => {
 
   return (
     <div>
-      <form onSubmit={modify ? handleUpdate : handleSubmit}>
+      <form onSubmit={modify ? handleUpdate : handleAdd}>
         <label>Question: </label>
         <input
           type="text"
