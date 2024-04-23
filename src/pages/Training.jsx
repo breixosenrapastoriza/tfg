@@ -24,11 +24,6 @@ const Training = () => {
     );
 
     if (gottenFlashcards.length !== 0) {
-      /*const leastKnowledgeFlashcard = gottenFlashcards.reduce(
-        (minor, actual) => {
-          return actual.knowledge < minor.knowledge ? actual : minor;
-        }
-      );*/
       const minKnowledge = gottenFlashcards.reduce((min, current) => {
         return current.knowledge < min ? current.knowledge : min;
       }, gottenFlashcards[0].knowledge);

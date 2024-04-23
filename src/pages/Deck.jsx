@@ -25,7 +25,7 @@ const Deck = () => {
         {"<-"}
       </button>
       <button type="button" onClick={() => setTraining(!training)}>
-        Start training
+        {training ? "Start training" : "Cancel training"}
       </button>
       {training ? <Flashcards /> : <Training />}
     </div>
