@@ -19,11 +19,16 @@ const Training = () => {
     gottenFlashcards = gottenFlashcards.filter((card) =>
       card.path.startsWith(currentPath)
     );
+    console.log("ANTES:");
+    console.log(currentTime(180));
+    console.log(gottenFlashcards[0].time);
+    console.log(dateDifference(currentTime(120), gottenFlashcards[0].time));
+    console.log(dateDifference("2024-04-23T12:05:00", "2024-04-28"));
+
     gottenFlashcards = gottenFlashcards.filter(
       (card) => dateDifference(currentTime(0), card.time) <= 0
     );
 
-    console.log(gottenFlashcards);
     if (gottenFlashcards.length !== 0) {
       const leastKnowledgeFlashcard = gottenFlashcards.reduce(
         (minor, actual) => {
@@ -46,7 +51,7 @@ const Training = () => {
 
   const rateFlashcard = (knowledgeParam) => {
     const nextKnowledge =
-      knowledgeParam >= 0 && flashcard.knowledge + knowledgeParam;
+      knowledgeParam >= 0 ? flashcard.knowledge + knowledgeParam : 0;
     let minutesNextReview;
     switch (nextKnowledge) {
       case 0:

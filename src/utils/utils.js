@@ -15,8 +15,11 @@ export const currentTime = (addedMinutes) => {
 //que si la ruta lleva "/" al final hay que quitárselo
 
 export function dateDifference(fecha1, fecha2) {
-  const date1 = new Date(fecha1);
-  const date2 = new Date(fecha2);
+  // Parsear las fechas manualmente
+  const [dia1, mes1, anio1, hora1, minuto1, segundo1] = fecha1.split(/[\/: ]/);
+  const [dia2, mes2, anio2, hora2, minuto2, segundo2] = fecha2.split(/[\/: ]/);
+  const date1 = new Date(anio1, mes1 - 1, dia1, hora1, minuto1, segundo1);
+  const date2 = new Date(anio2, mes2 - 1, dia2, hora2, minuto2, segundo2);
 
   const diferenciaEnMilisegundos = date2 - date1;
 
