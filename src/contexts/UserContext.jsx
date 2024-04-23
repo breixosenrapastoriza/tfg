@@ -1,0 +1,28 @@
+import { onAuthStateChanged } from "firebase/auth";
+import { createContext, useEffect, useState, useRef } from "react";
+import { auth } from "../config/firebase";
+import { Navigate } from "react-router-dom";
+
+export const UserContext = createContext();
+
+const UserProvider = ({ children }) => {
+  const [user, setUser] = useState(false); //
+
+  useEffect(() => {
+    console.log("HOLA: " + user);
+    const unsuscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u == null ? u : u.email);
+    });
+    return unsuscribe;
+  }, [user]);
+
+  if (user == false) return <p>Loading app...</p>;
+
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
+export default UserProvider;
