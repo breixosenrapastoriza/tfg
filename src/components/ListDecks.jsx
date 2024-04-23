@@ -8,7 +8,7 @@ import {
   getPaths,
 } from "../config/firebase";
 
-const ListDecks = ({ rutas, updatePaths }) => {
+const ListDecks = ({ rutas, updatePaths, handleClickModify }) => {
   const { user, setUser } = useContext(UserContext);
 
   function generateNestedList(paths, basePath = "") {
@@ -29,8 +29,6 @@ const ListDecks = ({ rutas, updatePaths }) => {
 
       return acc;
     }, []);
-
-    const handleClickUpdate = () => {};
 
     const navigate = useNavigate();
 
@@ -62,7 +60,7 @@ const ListDecks = ({ rutas, updatePaths }) => {
             <button
               type="button"
               onClick={() => {
-                handleClickUpdate(`${basePath}/${currentPath}${item.name}`);
+                handleClickModify(`${basePath}/${currentPath}${item.name}`);
               }}
             >
               Modify
