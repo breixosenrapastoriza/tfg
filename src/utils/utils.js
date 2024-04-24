@@ -33,3 +33,21 @@ export function dateDifference(fecha1, fecha2) {
 export function getRandomInt(max) {
   return Math.floor(Math.random() * (max + 1));
 }
+
+export function obtenerUltimaParteDeRuta(ruta) {
+  // Dividir la ruta en segmentos usando el carácter "/"
+  const segmentos = ruta.split("/");
+  // Tomar el último segmento
+  const ultimaParte = segmentos[segmentos.length - 1];
+  // Devolver el último segmento junto con el carácter "/" al principio
+  return "/" + ultimaParte;
+}
+
+export function obtenerParteSinUltimoSegmento(ruta) {
+  // Dividir la ruta en segmentos usando el carácter "/"
+  const segmentos = ruta.split("/");
+  // Eliminar el último segmento
+  segmentos.pop();
+  // Unir los segmentos restantes de nuevo en una cadena, agregando "/" entre ellos
+  return segmentos.join("/");
+}

@@ -12,6 +12,10 @@ import {
   updateFlashcard,
 } from "../config/firebase";
 import { Navigate, useNavigate } from "react-router-dom";
+import {
+  obtenerParteSinUltimoSegmento,
+  obtenerUltimaParteDeRuta,
+} from "../utils/utils";
 
 const Start = () => {
   const [name, setName] = useState("");
@@ -33,7 +37,7 @@ const Start = () => {
   };
 
   const handleClickModify = (modifiedName) => {
-    setName(modifiedName);
+    setName(obtenerUltimaParteDeRuta(modifiedName));
     setSelectedPathId(modifiedName);
     setModify(!modify);
     //console.log(!modify);
@@ -42,42 +46,44 @@ const Start = () => {
 
   const handleModify = async (e) => {
     e.preventDefault();
-    console.log("FUNCION 2");
-    console.log(selectedPathId);
+
     let gottenFlashcards = await getFlashcards(user);
     gottenFlashcards = gottenFlashcards.filter((card) =>
       card.path.startsWith(selectedPathId)
     );
-    gottenFlashcards.forEach(async (card) => {
-      console.log(
-        "card.path = " + card.path + "  selectedPathId = " + selectedPathId
-      );
-      if (card.path === selectedPathId) {
-        await updateFlashcard(user, card.id, { ...card, path: name });
-      } else {
-        let subfolder = card.path.replace(selectedPathId, "");
-        await updateFlashcard(user, card.id, {
-          ...card,
-          path: name + subfolder,
-        });
-      }
-    });
+
+    await Promise.all(
+      gottenFlashcards.map(async (card) => {
+        if (card.path === selectedPathId) {
+          await updateFlashcard(user, card.id, { ...card, path: name });
+        } else {
+          let subfolder = card.path.replace(selectedPathId, "");
+          await updateFlashcard(user, card.id, {
+            ...card,
+            path: name + subfolder,
+          });
+        }
+      })
+    );
 
     let gottenPaths = await getPaths(user);
     gottenPaths = gottenPaths.filter((path) => path.startsWith(selectedPathId));
-    gottenPaths.forEach(async (path) => {
-      //console.log(card.replace(/\//g, "\\"));
-      if (path === selectedPathId) {
+
+    await Promise.all(
+      gottenPaths.map(async (path) => {
+        let initPath = obtenerParteSinUltimoSegmento(selectedPathId);
         await deletePath(user, path.replace(/\//g, "\\"));
-        await addPath(user, name.replace(/\//g, "\\"));
-      } else {
-        let subfolder = path.replace(selectedPathId, "");
-        let newFolder = name + subfolder;
-        await deletePath(user, path.replace(/\//g, "\\"));
-        await addPath(user, newFolder.replace(/\//g, "\\"));
-      }
-    });
-    loadPaths();
+        if (path === selectedPathId) {
+          await addPath(user, initPath + name.replace(/\//g, "\\"));
+        } else {
+          let subfolder = path.replace(selectedPathId, "");
+          let newFolder = name + subfolder;
+          await addPath(user, initPath + newFolder.replace(/\//g, "\\"));
+        }
+      })
+    );
+
+    await loadPaths();
     setModify(false);
   };
 
