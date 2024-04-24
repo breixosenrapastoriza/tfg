@@ -49,15 +49,33 @@ const Start = () => {
       card.path.startsWith(selectedPathId)
     );
     gottenFlashcards.forEach(async (card) => {
-      await updateFlashcard(user, card.id, { ...card, path: name });
+      console.log(
+        "card.path = " + card.path + "  selectedPathId = " + selectedPathId
+      );
+      if (card.path === selectedPathId) {
+        await updateFlashcard(user, card.id, { ...card, path: name });
+      } else {
+        let subfolder = card.path.replace(selectedPathId, "");
+        await updateFlashcard(user, card.id, {
+          ...card,
+          path: name + subfolder,
+        });
+      }
     });
 
     let gottenPaths = await getPaths(user);
-    gottenPaths = gottenPaths.filter((card) => card.startsWith(selectedPathId));
-    gottenPaths.forEach(async (card) => {
+    gottenPaths = gottenPaths.filter((path) => path.startsWith(selectedPathId));
+    gottenPaths.forEach(async (path) => {
       //console.log(card.replace(/\//g, "\\"));
-      await deletePath(user, card.replace(/\//g, "\\"));
-      await addPath(user, name.replace(/\//g, "\\"));
+      if (path === selectedPathId) {
+        await deletePath(user, path.replace(/\//g, "\\"));
+        await addPath(user, name.replace(/\//g, "\\"));
+      } else {
+        let subfolder = path.replace(selectedPathId, "");
+        let newFolder = name + subfolder;
+        await deletePath(user, path.replace(/\//g, "\\"));
+        await addPath(user, newFolder.replace(/\//g, "\\"));
+      }
     });
     loadPaths();
     setModify(false);
