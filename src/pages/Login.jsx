@@ -10,15 +10,19 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(credentials.email, credentials.password);
-      //setUser(credentials.email, password: credentials.password });
+      setShowError(true);
+      setErrorMessage("");
       navigate("/");
     } catch (error) {
-      console.log(error.message);
+      setShowError(true);
+      setErrorMessage(error.code);
     }
   };
 
@@ -34,6 +38,11 @@ const Login = () => {
   return (
     <>
       <h1>Login</h1>
+      {showError && (
+        <div>
+          <h2>{errorMessage}</h2>
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
         <label>Email: </label>
         <input
