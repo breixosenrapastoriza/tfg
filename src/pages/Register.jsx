@@ -18,14 +18,14 @@ const Register = () => {
       if (credentials.password.length < 6) {
         throw new Error("The password is too short.");
       }
-      if (/[0-9]/.test(credentials.password)) {
-        throw new Error("The password must have any number.");
-      }
-      if (/[A-Z]/.test(credentials.password)) {
+      if (!/[A-Z]/.test(credentials.password)) {
         throw new Error("The password must have any capital letter.");
       }
-      if (/[a-z]/.test(credentials.password)) {
+      if (!/[a-z]/.test(credentials.password)) {
         throw new Error("The password must have any lowercase letter.");
+      }
+      if (!/[0-9]/.test(credentials.password)) {
+        throw new Error("The password must have any number.");
       }
       await register(credentials.email, credentials.password);
       await setUserFolders(credentials.email);
