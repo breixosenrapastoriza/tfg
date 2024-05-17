@@ -18,7 +18,7 @@ import {
 } from "firebase/firestore";
 import React, { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { currentTime } from "../utils/utils";
+import { currentTime, obtenerSegmentosRuta } from "../utils/utils";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -65,7 +65,14 @@ export const codigoEjecutar = () => {
 
 export const addPath = async (email, name) => {
   name = name.replace(/\//g, "\\");
-  await setDoc(doc(db, "users", email, "paths", name), {});
+  console.log(obtenerSegmentosRuta(name));
+  const segments = obtenerSegmentosRuta(name);
+
+  const promises = segments.map((segment) =>
+    setDoc(doc(db, "users", email, "paths", segment), {})
+  );
+
+  await Promise.all(promises);
 };
 
 export const deletePath = async (email, id) => {

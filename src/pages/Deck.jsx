@@ -18,6 +18,13 @@ const Deck = () => {
   const currentPath = "/" + params.id + (params["*"] && "/" + params["*"]);
   const [training, setTraining] = useState(true);
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/welcome");
+      return;
+    }
+  }, []);
+
   return (
     <div>
       <h1>{currentPath}</h1>

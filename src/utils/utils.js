@@ -1,3 +1,28 @@
+import { getFlashcards } from "../config/firebase";
+
+export const deckHasTraining = async (ruta, user) => {
+  const list = await getFlashcards(user);
+  const filtered_list = list.filter((element) => element.path.startsWith(ruta));
+  for (let index = 0; index < filtered_list.length; index++) {
+    const card = filtered_list[index];
+    if (dateDifference(currentTime(0), card.time) <= 0) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const deckKnowledge = async (ruta, user) => {
+  const list = await getFlashcards(user);
+  const filtered_list = list.filter((element) => element.path.startsWith(ruta));
+  const sumWithInitial = filtered_list.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.knowledge,
+    0
+  );
+  const length = filtered_list.length == 0 ? 1 : filtered_list.length;
+  return sumWithInitial / length;
+};
+
 export const currentTime = (addedMinutes) => {
   const currentDate = new Date();
   currentDate.setMinutes(currentDate.getMinutes() + addedMinutes);
@@ -50,4 +75,13 @@ export function obtenerParteSinUltimoSegmento(ruta) {
   segmentos.pop();
   // Unir los segmentos restantes de nuevo en una cadena, agregando "/" entre ellos
   return segmentos.join("/");
+}
+
+export function obtenerSegmentosRuta(ruta) {
+  const partes = ruta.split("\\");
+  const rutas = partes
+    .map((_, index) => partes.slice(0, index + 1).join("\\"))
+    .filter((elem) => elem !== "")
+    .map((ruta) => ruta.replace(/\\\\/g, "\\"));
+  return rutas;
 }

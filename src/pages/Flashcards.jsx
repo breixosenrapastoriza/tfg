@@ -75,6 +75,11 @@ const Flashcards = () => {
   };
 
   useEffect(() => {
+    if (!user) {
+      navigate("/welcome");
+      return;
+    }
+
     loadFlashcards();
   }, [flashcards]);
 

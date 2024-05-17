@@ -8,7 +8,6 @@ const Welcome = () => {
       <button type="button" onClick={() => navigate("/login")}>
         Login
       </button>
-      <button type="button">Login</button>
     </>
   );
 };

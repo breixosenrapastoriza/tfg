@@ -45,6 +45,10 @@ const Training = () => {
   };
 
   useEffect(() => {
+    if (!user) {
+      navigate("/welcome");
+      return;
+    }
     loadFlashcard();
   }, [load]);
 

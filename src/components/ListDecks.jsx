@@ -7,9 +7,53 @@ import {
   getFlashcards,
   getPaths,
 } from "../config/firebase";
+import { deckHasTraining, deckKnowledge } from "../utils/utils";
 
 const ListDecks = ({ rutas, updatePaths, handleClickModify }) => {
   const { user, setUser } = useContext(UserContext);
+  const [knowledgeMap, setKnowledgeMap] = useState({});
+  const [hasTrainingMap, setHasTrainingMap] = useState({});
+
+  useEffect(() => {
+    const fetchDeckKnowledge = async () => {
+      const knowledgePromises = rutas.map(async (ruta) => {
+        const knowledge = await deckKnowledge(ruta, user);
+        //const necesita repaso??
+        return { ruta, knowledge }; //poner
+      });
+      const knowledgeArray = await Promise.all(knowledgePromises);
+      const knowledgeObject = knowledgeArray.reduce(
+        (acc, { ruta, knowledge }) => {
+          acc[ruta] = knowledge;
+          return acc;
+        },
+        {}
+      );
+      console.log(knowledgeObject);
+      setKnowledgeMap(knowledgeObject);
+    };
+
+    const fetchDeckHasTraining = async () => {
+      const hasTrainingPromises = rutas.map(async (ruta) => {
+        const hasTraining = await deckHasTraining(ruta, user);
+        console.log(ruta + ": " + hasTraining);
+        return { ruta, hasTraining }; //poner
+      });
+      const hasTrainingArray = await Promise.all(hasTrainingPromises);
+      const hasTrainingObject = hasTrainingArray.reduce(
+        (acc, { ruta, hasTraining }) => {
+          acc[ruta] = hasTraining;
+          return acc;
+        },
+        {}
+      );
+      console.log(hasTrainingObject);
+      setHasTrainingMap(hasTrainingObject);
+    };
+
+    fetchDeckKnowledge();
+    fetchDeckHasTraining();
+  }, [rutas, user]);
 
   function generateNestedList(paths, basePath = "") {
     const nestedList = paths.reduce((acc, path) => {
@@ -57,9 +101,15 @@ const ListDecks = ({ rutas, updatePaths, handleClickModify }) => {
             <Link to={`${basePath}/${currentPath}${item.name}`}>
               {item.name}
             </Link>{" "}
+            Knowledge - {knowledgeMap[`${basePath}/${currentPath}${item.name}`]}{" "}
+            HasTraining -{" "}
+            {hasTrainingMap[`${basePath}/${currentPath}${item.name}`]
+              ? "True"
+              : "False"}
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
+                console.log(await getFlashcards(user));
                 handleClickModify(`${basePath}/${currentPath}${item.name}`);
               }}
             >

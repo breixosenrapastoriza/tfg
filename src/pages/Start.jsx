@@ -91,11 +91,16 @@ const Start = () => {
     setPaths(await getPaths(user));
   };
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+    if (!user) {
+      navigate("/welcome");
+      return;
+    }
+
     loadPaths();
   }, []);
-
-  const navigate = useNavigate();
 
   const handleLogOut = async () => {
     await logout();
