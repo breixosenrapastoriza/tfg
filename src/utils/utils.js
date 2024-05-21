@@ -1,5 +1,15 @@
 import { getFlashcards } from "../config/firebase";
 
+export const enumToNumber = (enumeration) => {
+  if (enumeration === "high") {
+    return 2;
+  } else if (enumeration == "standar") {
+    return 1;
+  } else {
+    return 0.5;
+  }
+};
+
 export const deckHasTraining = async (ruta, user) => {
   const list = await getFlashcards(user);
   const filtered_list = list.filter((element) => element.path.startsWith(ruta));

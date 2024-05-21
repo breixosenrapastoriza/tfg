@@ -36,7 +36,6 @@ const ListDecks = ({ rutas, updatePaths, handleClickModify }) => {
     const fetchDeckHasTraining = async () => {
       const hasTrainingPromises = rutas.map(async (ruta) => {
         const hasTraining = await deckHasTraining(ruta, user);
-        console.log(ruta + ": " + hasTraining);
         return { ruta, hasTraining }; //poner
       });
       const hasTrainingArray = await Promise.all(hasTrainingPromises);
@@ -47,7 +46,6 @@ const ListDecks = ({ rutas, updatePaths, handleClickModify }) => {
         },
         {}
       );
-      console.log(hasTrainingObject);
       setHasTrainingMap(hasTrainingObject);
     };
 

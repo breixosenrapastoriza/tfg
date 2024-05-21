@@ -10,13 +10,15 @@ import { UserContext } from "../contexts/UserContext";
 import { Link } from "react-router-dom";
 import Training from "./Training";
 import Flashcards from "./Flashcards";
+import Configuration from "./Configuration";
+import Generator from "./Generator";
 
 const Deck = () => {
   const params = useLoaderData();
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const currentPath = "/" + params.id + (params["*"] && "/" + params["*"]);
-  const [training, setTraining] = useState(true);
+  const [mode, setMode] = useState("flashcards");
 
   useEffect(() => {
     if (!user) {
@@ -28,13 +30,38 @@ const Deck = () => {
   return (
     <div>
       <h1>{currentPath}</h1>
-      <button type="button" onClick={() => navigate("/")}>
+      <button
+        type="button"
+        onClick={() =>
+          mode === "configuration" || mode === "generator"
+            ? setMode("flashcards")
+            : navigate("/")
+        }
+      >
         {"<-"}
       </button>
-      <button type="button" onClick={() => setTraining(!training)}>
-        {training ? "Start training" : "Cancel training"}
-      </button>
-      {training ? <Flashcards /> : <Training />}
+      {mode === "training" && (
+        <button type="button" onClick={() => setMode("flashcards")}>
+          Cancel training
+        </button>
+      )}
+      {mode === "flashcards" && (
+        <div>
+          <button type="button" onClick={() => setMode("training")}>
+            Start training
+          </button>
+          <button type="button" onClick={() => setMode("configuration")}>
+            Configuration
+          </button>
+          <button type="button" onClick={() => setMode("generator")}>
+            Generator
+          </button>
+        </div>
+      )}
+      {mode === "training" && <Training />}
+      {mode === "flashcards" && <Flashcards />}
+      {mode === "generator" && <Generator />}
+      {mode === "configuration" && <Configuration currentPath={currentPath} />}
     </div>
   );
 };

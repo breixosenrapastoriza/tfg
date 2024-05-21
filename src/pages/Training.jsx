@@ -1,8 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import { UserContext } from "../contexts/UserContext";
-import { getFlashcards, updateFlashcard } from "../config/firebase";
-import { currentTime, dateDifference, getRandomInt } from "../utils/utils";
+import { getFlashcards, updateFlashcard, getPath } from "../config/firebase";
+import {
+  currentTime,
+  dateDifference,
+  enumToNumber,
+  getRandomInt,
+} from "../utils/utils";
 
 const Training = () => {
   const params = useLoaderData();
@@ -13,6 +18,7 @@ const Training = () => {
   const [show, setShow] = useState(false);
   const [load, setLoad] = useState(true);
   const [empty, setEmpty] = useState(false);
+  const [configuration, setConfiguration] = useState({});
 
   const loadFlashcard = async () => {
     let gottenFlashcards = await getFlashcards(user);
@@ -44,53 +50,56 @@ const Training = () => {
     }
   };
 
+  const loadConfiguration = async () => {
+    setConfiguration(await getPath(user, currentPath));
+  };
+
   useEffect(() => {
     if (!user) {
       navigate("/welcome");
       return;
     }
     loadFlashcard();
+    loadConfiguration();
+    console.log(configuration);
+    console.log({
+      space: enumToNumber(configuration.space),
+      lose: -enumToNumber(configuration.lose),
+      gain: enumToNumber(configuration.gain),
+    });
   }, [load]);
 
   const rateFlashcard = (knowledgeParam) => {
-    const nextKnowledge =
-      knowledgeParam >= 0 ? flashcard.knowledge + knowledgeParam : 0;
-    let minutesNextReview;
-    switch (nextKnowledge) {
-      case 0:
-        minutesNextReview = 0;
-        break;
-      case 1:
-        minutesNextReview = 5;
-        break;
-      case 2:
-        minutesNextReview = 15;
-        break;
-      case 3:
-        minutesNextReview = 30;
-        break;
-      case 4:
-        minutesNextReview = 60;
-        break;
-      case 5:
-        minutesNextReview = 120;
-        break;
-      case 6:
-        minutesNextReview = 240;
-        break;
-      case 7:
-        minutesNextReview = 480;
-        break;
-      case 8:
-        minutesNextReview = 1440;
-        break;
-      case 9:
-        minutesNextReview = 2880;
-        break;
-      default:
-        minutesNextReview = 5760;
-        break;
+    let nextKnowledge = flashcard.knowledge + knowledgeParam;
+    if (nextKnowledge < 0) {
+      nextKnowledge = 0;
     }
+    let minutesNextReview;
+    if (nextKnowledge < 1) {
+      minutesNextReview = 0;
+    } else if (nextKnowledge >= 1 && nextKnowledge < 2) {
+      minutesNextReview = 5 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 2 && nextKnowledge < 3) {
+      minutesNextReview = 15 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 3 && nextKnowledge < 4) {
+      minutesNextReview = 30 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 4 && nextKnowledge < 5) {
+      minutesNextReview = 60 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 5 && nextKnowledge < 6) {
+      minutesNextReview = 120 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 6 && nextKnowledge < 7) {
+      minutesNextReview = 240 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 7 && nextKnowledge < 8) {
+      minutesNextReview = 480 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 8 && nextKnowledge < 9) {
+      minutesNextReview = 1440 * enumToNumber(configuration.space);
+    } else if (nextKnowledge >= 9 && nextKnowledge < 10) {
+      minutesNextReview = 2880 * enumToNumber(configuration.space);
+    } else {
+      minutesNextReview = 5760 * enumToNumber(configuration.space);
+    }
+    console.log(nextKnowledge);
+    console.log(minutesNextReview);
 
     updateFlashcard(user, flashcard.id, {
       question: flashcard.question,
@@ -125,7 +134,8 @@ const Training = () => {
               <button
                 type="button"
                 onClick={() => {
-                  rateFlashcard(-1);
+                  console.log(-1 * enumToNumber(configuration.lose));
+                  rateFlashcard(-1 * enumToNumber(configuration.lose));
                 }}
               >
                 Bad
@@ -141,7 +151,8 @@ const Training = () => {
               <button
                 type="button"
                 onClick={() => {
-                  rateFlashcard(1);
+                  console.log(enumToNumber(configuration.lose));
+                  rateFlashcard(enumToNumber(configuration.gain));
                 }}
               >
                 Good
