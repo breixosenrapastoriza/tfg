@@ -33,6 +33,12 @@ export const deckKnowledge = async (ruta, user) => {
   return sumWithInitial / length;
 };
 
+export const deckLength = async (ruta, user) => {
+  const list = await getFlashcards(user);
+  const filtered_list = list.filter((element) => element.path.startsWith(ruta));
+  return filtered_list.length;
+};
+
 export const currentTime = (addedMinutes) => {
   const currentDate = new Date();
   currentDate.setMinutes(currentDate.getMinutes() + addedMinutes);
@@ -94,4 +100,26 @@ export function obtenerSegmentosRuta(ruta) {
     .filter((elem) => elem !== "")
     .map((ruta) => ruta.replace(/\\\\/g, "\\"));
   return rutas;
+}
+
+export function insertarSlash(name) {
+  return name.startsWith("/") ? name : "/" + name;
+}
+
+export function addLeadingZeros(dateString) {
+  // Separar la fecha y la hora
+  const [date, time] = dateString.split(" ");
+
+  // Separar horas, minutos y segundos
+  const [hours, minutes, seconds] = time
+    .split(":")
+    .map((num) => num.padStart(2, "0"));
+
+  // Reconstruir la hora con ceros a la izquierda
+  const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+  // Reconstruir la fecha completa con la hora formateada
+  const formattedDate = `${date} ${formattedTime}`;
+
+  return formattedDate;
 }

@@ -9,14 +9,14 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState(false); //
 
   useEffect(() => {
-    console.log("HOLA: " + user);
     const unsuscribe = onAuthStateChanged(auth, (u) => {
       setUser(u == null ? u : u.email);
     });
     return unsuscribe;
   }, [user]);
 
-  if (user == false) return <p>Loading app...</p>;
+  if (user == false)
+    return <div className="loader mt-4 mb-4" style={{ width: "200px" }}></div>;
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

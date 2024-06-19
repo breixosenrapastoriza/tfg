@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   getAuth,
   signInWithEmailAndPassword,
   signOut,
@@ -15,23 +16,29 @@ import {
   doc,
   collection,
   updateDoc,
+  limit,
 } from "firebase/firestore";
 import React, { useContext } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { currentTime, obtenerSegmentosRuta } from "../utils/utils";
+import {
+  currentTime,
+  insertarSlash,
+  obtenerSegmentosRuta,
+} from "../utils/utils";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import jsonData from "../config/config.json";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDjQ4BGw5vksBa98q5Hp8iSr4I5xQws0_A",
-  authDomain: "cloack-garden.firebaseapp.com",
-  projectId: "cloack-garden",
-  storageBucket: "cloack-garden.appspot.com",
-  messagingSenderId: "978021721226",
-  appId: "1:978021721226:web:2e535710e37cc500c63973",
+  apiKey: jsonData.apiKey,
+  authDomain: jsonData.authDomain,
+  projectId: jsonData.projectId,
+  storageBucket: jsonData.storageBucket,
+  messagingSenderId: jsonData.messagingSenderId,
+  appId: jsonData.appId,
 };
 
 // Initialize Firebase
@@ -55,6 +62,33 @@ export const logout = () => {
   return signOut(auth);
 };
 
+export const deleteCurrentUser = async () => {
+  const user = auth.currentUser;
+
+  if (user) {
+    try {
+      const flashcards = await getFlashcards(user.email);
+      const paths = await getPaths(user.email);
+      flashcards.forEach(async (flashcard) => {
+        await deleteFlashcard(user.email, flashcard.id);
+      });
+      await deleteFlashcard(user.email, "ND");
+      paths.forEach(async (path) => {
+        const id = path.replace(/\//g, "\\");
+        await deletePath(user.email, id);
+      });
+      await deletePath(user.email, "ND");
+      await deleteDoc(doc(db, "users", user.email));
+      await deleteUser(user);
+      console.log("User deleted successfully");
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  } else {
+    console.log("No user is currently signed in.");
+  }
+};
+
 export const setUserFolders = async (email, password) => {
   await setDoc(doc(db, "users", email), {});
   await setDoc(doc(db, "users", email, "paths", "ND"), {});
@@ -66,12 +100,14 @@ export const codigoEjecutar = () => {
 };
 
 export const addPath = async (email, name) => {
+  name = insertarSlash(name);
   name = name.replace(/\//g, "\\");
   console.log(obtenerSegmentosRuta(name));
   const segments = obtenerSegmentosRuta(name);
 
   const promises = segments.map((segment) =>
     setDoc(doc(db, "users", email, "paths", segment), {
+      limit: 20,
       space: "standar",
       lose: "standar",
       gain: "standar",
@@ -82,11 +118,13 @@ export const addPath = async (email, name) => {
 };
 
 export const modifyPath = async (email, name, configuration) => {
+  //name = insertarSlash(name);
   name = name.replace(/\//g, "\\");
   await setDoc(doc(db, "users", email, "paths", name), configuration);
 };
 
 export const deletePath = async (email, id) => {
+  console.log("DELETE");
   await deleteDoc(doc(db, "users", email, "paths", id));
 };
 
@@ -131,6 +169,9 @@ export const addFlashcard = async (email, flashcard) => {
     ...flashcard,
     time: currentTime(0),
     knowledge: 0,
+    selected: false,
+    onTraining: false,
+    lastTraining: null,
   });
 };
 
@@ -142,28 +183,50 @@ export const deleteFlashcard = async (email, id) => {
   await deleteDoc(doc(db, "users", email, "cards", id));
 };
 
-export const generateFlashcards = async (reference, type) => {
+export const generateFlashcards = async (
+  reference,
+  type,
+  number,
+  difficulty = "Normal"
+) => {
   try {
     console.log(reference);
     console.log(type);
+    /*if (difficulty == "Difficult") {
+      difficulty = "difíciles";
+    } else if (difficulty == "Easy") {
+      difficulty = "fáciles";
+    } else {
+      difficulty = "";
+    }*/
     let prompt = "";
     if (type === "Text") {
       prompt =
-        'Crea flashcards y devuélvelas en el siguiente formato JSON [{"question": "question1", "answer": "answer1"}, {"question": "question2", "answer": "answer2"}]. No pongas el comienzo ```json ni el final ```. Extrae flashcards de este texto [' +
+        "Create " +
+        number +
+        ' flashcards and return them in the followin JSON format [{"question": "question1", "answer": "answer1"}, {"question": "question2", "answer": "answer2"}]. Do not put ```json neither at the start or at the end. Extract flashcards from this text [' +
         reference +
         "]";
     } else {
       prompt =
-        "Dame unas flashcards de " +
+        "Create " +
+        number +
+        " flashcards " +
+        difficulty +
+        " of " +
         reference +
-        ' en el siguiente formato JSON [{"question": "question1", "answer": "answer1"}, {"question": "question2", "answer": "answer2"}]. No pongas el comienzo ```json ni el final ```';
+        ' in the following JSON format [{"question": "question1", "answer": "answer1"}, {"question": "question2", "answer": "answer2"}]. Do not put ```json neither at the start or at the end.';
     }
-    console.log(prompt);
+    //console.log(prompt);
     const result = await model.generateContent(prompt);
-
     const response = await result.response;
-
-    const listaObjetos = JSON.parse(response.text());
+    //console.log(response.text());
+    const text = await response.text();
+    console.log(text.startsWith("["));
+    const jsonString = text.startsWith("[")
+      ? text.replace(/}\s*,\s*{/g, "},{")
+      : "[" + text.replace(/}\s*,\s*{/g, "},{") + "]";
+    const listaObjetos = JSON.parse(jsonString);
 
     return listaObjetos;
   } catch (error) {

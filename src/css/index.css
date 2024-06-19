@@ -1,0 +1,235 @@
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+body {
+  font-family: "SFProDisplay-Medium" !important;
+  background: linear-gradient(
+    270deg,
+    #007bff 25%,
+    #8c1b68 50%,
+    #007bff 75%,
+    #8c1b68 100%
+  );
+  background-size: 300% 300%;
+  animation: gradientAnimation 30s ease infinite;
+  margin: 0;
+}
+
+.specialh1 {
+  font-family: "SFProDisplay-Light" !important;
+}
+
+h1 {
+  font-family: "SFProDisplay-Bold" !important;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-main {
+  box-shadow: 0px 0px 50px;
+  border-radius: 10px;
+}
+
+.list-group-main > .list-group-item:not(:first-child):not(:last-child) {
+  box-shadow: none;
+}
+
+.list-group-main > .list-group-item:first-child {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.list-group-main > .list-group-item:last-child {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+select.form-control {
+  text-align: center;
+  text-align-last: center; /* Firefox */
+  -webkit-text-align-last: center; /* Chrome/Safari */
+  font-family: "SFProDisplay-Medium" !important;
+}
+
+option {
+  font-family: "SFProDisplay-Medium" !important;
+  text-align: center;
+}
+
+/* Nueva clase para hacer la caja más delgada */
+.custom-box {
+  max-width: 300px; /* Ajusta el valor según sea necesario */
+  margin: 0 auto; /* Centra la caja */
+}
+
+.flashcard-container {
+  perspective: 1000px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.flashcard {
+  width: 100%;
+  max-width: 500px;
+  height: 200px; /* Asegura una altura fija */
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+  display: flex; /* Añade Flexbox */
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+}
+
+.flashcard.show-answer {
+  transform: rotateY(180deg);
+}
+
+.flashcard .front,
+.flashcard .back {
+  position: absolute;
+  width: 100%;
+  height: 100%; /* Asegura que ambas caras tengan la misma altura */
+  backface-visibility: hidden;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex; /* Añade Flexbox */
+  align-items: center; /* Centra verticalmente */
+  justify-content: end; /* Centra horizontalmente */
+  flex-direction: column; /* Organiza el contenido en columna */
+}
+
+.flashcard .front {
+  background-color: white;
+}
+
+.flashcard .back {
+  background-color: white;
+  transform: rotateY(180deg);
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+    width: 100%;
+  }
+  50% {
+    left: 0;
+    width: 100%;
+  }
+  100% {
+    left: 100%;
+    width: 100%;
+  }
+}
+
+.loader {
+  height: 3px; /* Reduce la altura de la barra */
+  background-color: #b7b0b0;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto; /* Centra la barra de carga */
+}
+
+.loader::after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  background-color: #f3f3f3;
+  position: absolute;
+  left: -100%; /* Empieza fuera de la vista */
+  animation: loading 3s linear infinite;
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1s ease-out, opacity 0.5s ease-out;
+  opacity: 0;
+}
+
+.collapsible-content.open {
+  max-height: 1000px; /* Ajusta según el contenido máximo esperado */
+  opacity: 1;
+}
+
+.title-container {
+  margin-left: 1rem; /* Ajusta según sea necesario */
+}
+
+/*.input-short {
+  max-width: 80px;
+}
+
+.input-short {
+  flex: 1 1 auto;
+}*/
+
+.generator-form,
+.flashcard-form {
+  background-color: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  width: 100%;
+}
+
+.input-group-text {
+  border-radius: 10px;
+  background-color: #f1f1f1;
+}
+
+.form-control {
+  border-radius: 10px;
+}
+
+.btn,
+.btn:hover,
+.btn:active,
+.btn:focus {
+  border-radius: 10px !important;
+  border: none !important;
+  padding: 10px 20px !important;
+  font-size: 16px !important;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  transform: none !important;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-primary:active {
+  background-color: #0056b3;
+  transform: none;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
+
+.mt-2 {
+  margin-top: 0.5rem !important;
+}

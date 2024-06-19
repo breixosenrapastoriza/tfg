@@ -1,0 +1,44 @@
+@font-face {
+  font-family: "SFProDisplay-Black";
+  src: url("../fonts/SFProDisplay-Black.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Bold";
+  src: url("../fonts/SFProDisplay-Bold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Heavy";
+  src: url("../fonts/SFProDisplay-Heavy.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Light";
+  src: url("../fonts/SFProDisplay-Light.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Medium";
+  src: url("../fonts/SFProDisplay-Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Regular";
+  src: url("../fonts/SFProDisplay-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Semibold";
+  src: url("../fonts/SFProDisplay-Semibold.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Thin";
+  src: url("../fonts/SFProDisplay-Thin.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "SFProDisplay-Ultralight";
+  src: url("../fonts/SFProDisplay-Ultralight.ttf") format("truetype");
+}

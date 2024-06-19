@@ -29,14 +29,6 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "/auth",
-    element: (
-      <UserProvider>
-        <Auth />
-      </UserProvider>
-    ),
-  },
-  {
     path: "/:id/*",
     element: (
       <UserProvider>

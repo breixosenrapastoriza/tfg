@@ -130,7 +130,7 @@ const Generator = ({ mode, setMode }) => {
     >
       <div className="row mb-4">
         <div className="col text-center">
-          <h1 style={{ color: "white" }}>Generator by Topic</h1>
+          <h1 style={{ color: "white" }}>Generator by Text</h1>
         </div>
       </div>
       <div className="row mb-4">
@@ -169,13 +169,13 @@ const Generator = ({ mode, setMode }) => {
             </div>
             <div className="form-group mt-2">
               <label className="input-group-text" style={{ border: "none" }}>
-                Topic:{" "}
+                Text:{" "}
               </label>
-              <input
-                type="text"
+              <textarea
                 value={reference}
                 onChange={handleChangeReference}
                 className="form-control"
+                rows="4"
               />
             </div>
             <div className="form-group mt-2">

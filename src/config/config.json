@@ -1,0 +1,10 @@
+{
+  "spaceValues": [5, 15, 30, 60, 120, 240, 480, 1440, 2880, 5760],
+  "dailyTrainingInterval": 1440,
+  "apiKey": "AIzaSyDPtkC-CLCLlXNN5PT_2VjYeIs-dAJmvcI",
+  "authDomain": "tfg-flashcards.firebaseapp.com",
+  "projectId": "tfg-flashcards",
+  "storageBucket": "tfg-flashcards.appspot.com",
+  "messagingSenderId": "846636339550",
+  "appId": "1:846636339550:web:b0d0a5409b4c27e8df3fcf"
+}
